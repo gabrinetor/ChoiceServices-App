@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
                 usuario = auth.getCurrentUser();    //pegar usuário atual
 
                 if ( usuario != null ) {
-                    Intent intent = new Intent(LoginActivity.this, ListaActivity.class); //referência da tela que estou e a referencia da tela pra onde queremos ir
+                    Intent intent = new Intent(LoginActivity.this, HomeAdmActivity.class); //referência da tela que estou e a referencia da tela pra onde queremos ir
                     startActivity ( intent );
                 } else {
                     Toast.makeText(LoginActivity.this ,
