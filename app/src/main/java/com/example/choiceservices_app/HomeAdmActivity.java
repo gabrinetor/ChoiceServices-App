@@ -2,7 +2,20 @@ package com.example.choiceservices_app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -11,28 +24,23 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeAdmActivity extends AppCompatActivity {
 
     private ListView lvLista;
+    private ListView littlecart;
+    private List<Servico> listaLittleCart;
     private List<Servico> listaDeServicos;
+    private ServiceAdapter adapterService;
     private ArrayAdapter adapter;
 
     private FirebaseDatabase database;  //acessar
     private DatabaseReference reference;    //referenciar
     private ChildEventListener childEventListener;  //ramificar
     private Query query;    //objetificar
+    private int cont;       //contador
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,20 +49,54 @@ public class HomeAdmActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        lvLista = findViewById(R.id.lvLista);
+//        littlecart = findViewById(R.id.action_drawer_little);
+        listaDeServicos = new ArrayList<>();
+        listaDeServicos = new ArrayList<>();
+        adapterService = new ServiceAdapter(HomeAdmActivity.this, listaDeServicos);
+
+        lvLista.setAdapter(adapterService);
+        lvLista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent( HomeAdmActivity.this , FormularioActivity.class );
-                startActivity( intent );
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                listaDeServicos.add((Servico) parent.getItemAtPosition(position));
+                cont++;
             }
         });
 
-        listaDeServicos = new ArrayList<>();
+    }
 
-        lvLista = findViewById(R.id.lvHomeAdm);
-        adapter = new ArrayAdapter( HomeAdmActivity.this , android.R.layout.simple_list_item_1 , listaDeServicos );
-        lvLista.setAdapter( adapter );
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("SAIR");
+        //getMenuInflater().inflate(R.menu.menu_main, menu);  //conter items na barra do menu
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        /*if (id == R.id.action_drawer_carrinho) {
+            Log.i("Entrar", String.valueOf(listaLittleCart));
+            Intent intent;
+            intent = new Intent(HomeAdmActivity.this, CarrinhoActivity.class);
+            intent.putExtra("listaLittleCart", (ArrayList<Servico>) listaLittleCart);
+            startActivity( intent );
+            return true;
+        }
+
+        if (id == R.id.action_settings) { return true; }
+        */
+
+        if (item.toString().equals("Sair")) {
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            if ( auth.getCurrentUser() != null ) {
+                auth.signOut();
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -62,21 +104,20 @@ public class HomeAdmActivity extends AppCompatActivity {
         super.onStart();
 
         listaDeServicos.clear();
-
         database = FirebaseDatabase.getInstance();
         reference = database.getReference();
-        query = reference.child("servicos").orderByChild("preco");
+        query = reference.child("servicos").orderByChild("nome");
 
         childEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Servico s = new Servico();
-                s.id = snapshot.getKey();
-                s.nome = snapshot.child("nome").getValue( String.class );
-                s.preco = snapshot.child("preco").getValue( Double.class );
 
-                listaDeServicos.add( s );   //pegou o produto do firebase e adicionou na lista
-                adapter.notifyDataSetChanged(); //atualizar a tela
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String s) {
+                Servico serv = new Servico();
+                serv.setNome(snapshot.child("nome").getValue(String.class));
+                serv.setPreco(snapshot.child("preco").getValue(Double.class));
+                serv.setKey(snapshot.getKey());
+                listaDeServicos.add(serv);  //adicionar cada item servico
+                adapterService.notifyDataSetChanged();
             }
 
             @Override
@@ -100,15 +141,12 @@ public class HomeAdmActivity extends AppCompatActivity {
             }
         };
 
-        query.addChildEventListener( childEventListener );
-
+        query.addChildEventListener(childEventListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
-        query.removeEventListener( childEventListener );
+        query.removeEventListener(childEventListener);
     }
-
 }

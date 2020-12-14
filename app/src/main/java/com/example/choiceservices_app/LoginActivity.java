@@ -38,12 +38,19 @@ public class LoginActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();  //inicializando o objeto de autenticação
 
         authStateListener = new FirebaseAuth.AuthStateListener() {      //inicializa verifica o que está ocorrendo, de acordo com o estado dele [autentc / não-autentic]
+
             @Override   //sobrescrita do método obrigatório
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 usuario = auth.getCurrentUser();    //pegar usuário atual
 
                 if ( usuario != null ) {
-                    Intent intent = new Intent(LoginActivity.this, HomeAdmActivity.class); //referência da tela que estou e a referencia da tela pra onde queremos ir
+                    Intent intent;
+
+                    if ( usuario.getEmail().equals("user1@adm.com") ) {
+                        intent = new Intent(LoginActivity.this, ListaActivity.class);
+                    } else {
+                        intent = new Intent(LoginActivity.this, HomeAdmActivity.class);
+                    }
                     startActivity ( intent );
                 } else {
                     Toast.makeText(LoginActivity.this ,
@@ -79,7 +86,19 @@ public class LoginActivity extends AppCompatActivity {
                     if ( !task.isSuccessful() ) {
                         Toast.makeText( LoginActivity.this ,
                                 "Erro ao realizar o login" , Toast.LENGTH_LONG).show();
+                    } else {
+                        usuario = auth.getCurrentUser();
+                        if(usuario != null){
+                            Intent intent;
+                            if( usuario.getEmail().equals("user1@adm.com")) {
+                                intent = new Intent(LoginActivity.this , ListaActivity.class);
+                            } else {
+                                intent = new Intent(LoginActivity.this , HomeAdmActivity.class);
+                            }
+                            startActivity( intent );
+                        }
                     }
+
                 }
             });
         }

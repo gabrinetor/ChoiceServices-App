@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.choiceservices_app.HomeAdmActivity">
+    <item
+        android:id="@+id/action_confg"
+        android:orderInCategory="100"
+        android:title="@string/action_confs"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_drawer_carrinho"
+        android:icon="@drawable/cart"
+        app:showAsAction="always"
+        android:title="Carrinho" />
+</menu>

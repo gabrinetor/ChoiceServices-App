@@ -71,8 +71,11 @@
 
         </androidx.cardview.widget.CardView>
 
+        <include layout="@layout/content_carrinho" />
+
         <Button
             android:text="CONFIRMAR"
+            android:id="@+id/btn_confirmar"
             android:textColor="@android:color/white"
             android:background="#00CED1"
             android:layout_marginTop="8dp"

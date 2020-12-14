@@ -39,13 +39,13 @@ public class FormularioActivity extends AppCompatActivity {
 
         if ( !nome.isEmpty() ) {
             Servico serv = new Servico();
-            serv.nome = nome;
+            serv.setNome(nome);
 
             if ( preco.isEmpty() ) {
-                serv.preco = 0.0;
+                serv.setPreco(0.00);
             } else {
                 preco = preco.replace( "," , "." );  //senão procuro por uma vírgula ou por ponto no preço, ao cadastrar serviço
-                serv.preco = Double.valueOf( preco );
+                serv.setPreco(Double.valueOf( preco ));
             }
 
             FirebaseDatabase database = FirebaseDatabase.getInstance(); //comunicação com o firebase
