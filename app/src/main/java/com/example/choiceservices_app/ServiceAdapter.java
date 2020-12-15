@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -39,4 +41,10 @@ public class ServiceAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         return view;
     }
+
+    private class ItemSuporte{
+        TextView tvNome, tvPreco;
+        LinearLayout layout;
+    }
+
 }

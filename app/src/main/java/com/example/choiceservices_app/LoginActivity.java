@@ -46,10 +46,10 @@ public class LoginActivity extends AppCompatActivity {
                 if ( usuario != null ) {
                     Intent intent;
 
-                    if ( usuario.getEmail().equals("user1@adm.com") ) {
-                        intent = new Intent(LoginActivity.this, ListaActivity.class);
-                    } else {
+                    if ( usuario.getEmail().equals("admin@domin.com") ) {
                         intent = new Intent(LoginActivity.this, HomeAdmActivity.class);
+                    } else {
+                        intent = new Intent(LoginActivity.this, ListaActivity.class);
                     }
                     startActivity ( intent );
                 } else {
@@ -90,10 +90,10 @@ public class LoginActivity extends AppCompatActivity {
                         usuario = auth.getCurrentUser();
                         if(usuario != null){
                             Intent intent;
-                            if( usuario.getEmail().equals("user1@adm.com")) {
-                                intent = new Intent(LoginActivity.this , ListaActivity.class);
-                            } else {
+                            if( usuario.getEmail().equals("admin@domin.com")) {
                                 intent = new Intent(LoginActivity.this , HomeAdmActivity.class);
+                            } else {
+                                intent = new Intent(LoginActivity.this , ListaActivity.class);
                             }
                             startActivity( intent );
                         }
@@ -115,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (!task.isSuccessful()) {
                         Toast.makeText(LoginActivity.this,
-                                "Erro ao realizar o cadastrar", Toast.LENGTH_LONG).show();
+                                "Erro ao cadastrar", Toast.LENGTH_LONG).show();
                     } else {
                         usuario = auth.getCurrentUser();
                     }
