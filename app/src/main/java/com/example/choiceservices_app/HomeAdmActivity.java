@@ -39,10 +39,10 @@ public class HomeAdmActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista);
 
-        Toolbar toolbar = findViewById(R.id.fab);
+        Toolbar toolbar = findViewById(R.id.toolbarhome);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fabhome);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

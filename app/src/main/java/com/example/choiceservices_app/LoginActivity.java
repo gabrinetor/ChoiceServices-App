@@ -20,6 +20,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText etEmail, etSenha;
     private Button btnEntrar, btnCadastro;
+    boolean vfCampo = true;    //verificar se campo está preenchido
 
     FirebaseAuth auth;  //busca autenticação
     FirebaseAuth.AuthStateListener authStateListener;   //verifica o estado da verificação
@@ -33,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etSenha = findViewById(R.id.etSenha);
         btnEntrar = findViewById(R.id.btnEntrar);
-        btnCadastro = findViewById(R.id.btnCadastro);
+        btnCadastro = findViewById(R.id.btnIrCadastrar);
 
         auth = FirebaseAuth.getInstance();  //inicializando o objeto de autenticação
 
@@ -47,9 +48,9 @@ public class LoginActivity extends AppCompatActivity {
                     Intent intent;
 
                     if ( usuario.getEmail().equals("admin@domin.com") ) {
-                        intent = new Intent(LoginActivity.this, HomeAdmActivity.class);
+                        intent = new Intent(LoginActivity.this, HomeAdmActivity.class);  //login admin
                     } else {
-                        intent = new Intent(LoginActivity.this, ListaActivity.class);
+                        intent = new Intent(LoginActivity.this, ListaActivity.class);  //login usuario contratante
                     }
                     startActivity ( intent );
                 } else {
@@ -66,12 +67,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        btnCadastro.setOnClickListener(new View.OnClickListener() {
+/*        btnCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 cadastrar();
             }
-        });
+        });*/
 
     }
 
@@ -80,32 +81,41 @@ public class LoginActivity extends AppCompatActivity {
         String senha = etSenha.getText().toString();
 
         if ( !email.isEmpty() && !senha.isEmpty() ) {
-            auth.signInWithEmailAndPassword( email , senha ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {    //task é a tarefa resultante dessa ação
-                    if ( !task.isSuccessful() ) {
-                        Toast.makeText( LoginActivity.this ,
-                                "Erro ao realizar o login" , Toast.LENGTH_LONG).show();
-                    } else {
-                        usuario = auth.getCurrentUser();
-                        if(usuario != null){
+//            auth.signInWithEmailAndPassword( email , senha ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                @Override
+//                public void onComplete(@NonNull Task<AuthResult> task) {    //task é a tarefa resultante dessa ação
+//                    if ( !task.isSuccessful() ) {
+//                        Toast.makeText( LoginActivity.this ,
+//                                "Erro ao realizar o login" , Toast.LENGTH_LONG).show();
+//                    } else {
+//                        usuario = auth.getCurrentUser();
+//                        if(usuario != null){
+//                            Intent intent;
+//                            if( usuario.getEmail().equals("admin@domin.com")) {
+//                                intent = new Intent(LoginActivity.this , HomeAdmActivity.class);
+//                            } else {
+//                                intent = new Intent(LoginActivity.this , ListaActivity.class);
+//                            }
+//                            startActivity( intent );
+//                        }
+//                    }
+//
+//                }
+//            });       //obj.metodo.evento( ref. superclasse {  @Override método(parm.) {...}  });
+
                             Intent intent;
-                            if( usuario.getEmail().equals("admin@domin.com")) {
+                            if( email.equals("admin@domin.com")) {
                                 intent = new Intent(LoginActivity.this , HomeAdmActivity.class);
                             } else {
                                 intent = new Intent(LoginActivity.this , ListaActivity.class);
                             }
                             startActivity( intent );
-                        }
-                    }
 
-                }
-            });
         }
 
     }
 
-    private void cadastrar() {
+    /*private void cadastrar() {
         String email = etEmail.getText().toString();
         String senha = etSenha.getText().toString();
 
@@ -118,9 +128,47 @@ public class LoginActivity extends AppCompatActivity {
                                 "Erro ao cadastrar", Toast.LENGTH_LONG).show();
                     } else {
                         usuario = auth.getCurrentUser();
+                        if(usuario != null) { Intent intent;
+                            if( usuario.getEmail().equals("admin@domin.com")) {
+                                intent = new Intent(LoginActivity.this , HomeAdmActivity.class);
+                            } else {
+                                intent = new Intent(LoginActivity.this , ListaActivity.class);
+                            }
+                            startActivity( intent ); }
                     }
+
                 }
             });
         }
-    }
+
+        /*
+        //sobrescrita para criar instancia dentro do método cadastrar
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_register);
+
+            etEmail = findViewById(R.id.etEmail);
+            etSenha = findViewById(R.id.etSenha);
+            btnEntrar = findViewById(R.id.btnEntrar);
+            btnCadastro = findViewById(R.id.btnCadastro);
+
+            //outra forma de verificar se os campos não estão vazios, fazendo referência ao método abaixo
+            verCampos(etEmail);
+            verCampos(etSenha);
+
+        }*/
+
+    //}/*
+
+    /*public boolean verCampos(EditText textField){
+        if(textField.getText().toString().isEmpty()){
+            textField.setError("Error");
+            valid = false;
+        }else {
+            valid = true;
+        }
+
+        return valid;
+    }*/
 }

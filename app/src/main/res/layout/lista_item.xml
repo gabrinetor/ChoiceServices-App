@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/thumbnail"
-            android:text="Pineapple"
+            android:text="Designer"
             android:textColor="#000000"
             android:textSize="18dp"
             android:typeface="sans" />
@@ -54,7 +54,7 @@
                 android:layout_marginLeft="60dp"
                 android:layout_weight="0.23"
                 android:paddingRight="5dp"
-                android:text="Rs. 300"
+                android:text="R$ 300,00"
                 android:textColor="#000000"
                 android:textSize="14dp"
                 android:textStyle="bold" />

@@ -52,7 +52,7 @@
         app:layout_constraintTop_toBottomOf="@+id/etSenha" />
 
     <Button
-        android:id="@+id/btnCadastro"
+        android:id="@+id/btnIrCadastrar"
         android:layout_width="190dp"
         android:layout_height="52dp"
         android:layout_marginStart="8dp"

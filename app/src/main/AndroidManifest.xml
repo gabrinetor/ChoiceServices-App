@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.choiceservices_app" >
+    package="com.example.choiceservices_app">
 
     <application
         android:allowBackup="true"
@@ -8,7 +8,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
+        <activity android:name=".CadastroActivity"></activity>
+
         <meta-data
             android:name="com.google.android.actions"
             android:resource="@xml/menu_main" />
@@ -23,7 +25,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".CarrinhoActivity" />
         <activity android:name=".FormularioActivity" />
-        <activity android:name=".LoginActivity" >
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

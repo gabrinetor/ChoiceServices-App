@@ -29,7 +29,7 @@ import java.util.List;
 public class ListaActivity extends AppCompatActivity {
 
     private ListView lvLista;
-    private ListView littlecart;
+    private ListView carrinho;
     private List<Servico> listaLittleCart;
     private List<Servico> listaDeServicos;
     private ServiceAdapter adapterService;
@@ -49,7 +49,7 @@ public class ListaActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         lvLista = findViewById(R.id.lvLista);
-        littlecart = findViewById(R.id.btnCarrinho);
+        carrinho = findViewById(R.id.action_drawer_carrinho);
         listaDeServicos = new ArrayList<>();
         listaDeServicos = new ArrayList<>();
         adapterService = new ServiceAdapter(ListaActivity.this, listaDeServicos);

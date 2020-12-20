@@ -19,7 +19,6 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:text="@string/txtNome"
-            android:textColor="#FFFFFF"
             android:textStyle="bold" />
 
         <TextView
@@ -32,7 +31,6 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:text="@string/txtNomeServico"
-            android:textColor="#FFFFFF"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -48,7 +46,6 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:text="@string/txtPreco"
-            android:textColor="#FFFFFF"
             android:textStyle="bold" />
 
         <TextView
@@ -60,7 +57,6 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:text="@string/txtPrecoServico"
-            android:textColor="#FFFFFF"
             android:textStyle="bold" />
     </LinearLayout>
 
