@@ -5,16 +5,22 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -25,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseAuth auth;  //busca autenticação
     FirebaseAuth.AuthStateListener authStateListener;   //verifica o estado da verificação
     FirebaseUser usuario;   //verifica usuário, caso seja null: { não está logado ainda }; caso não seja null: { estará logado }; caso esteja logado: { estará na lista };
+    FirebaseFirestore colecUsuario; //sincronizar dados através do listener, em tempo real
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +44,40 @@ public class LoginActivity extends AppCompatActivity {
         btnCadastro = findViewById(R.id.btnIrCadastrar);
 
         auth = FirebaseAuth.getInstance();  //inicializando o objeto de autenticação
+        colecUsuario = FirebaseFirestore.getInstance();  //inicializando o objeto para autenticar usuario armazenado no colection do firebase em tempo real
+
+        //logar
+        btnEntrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checarCampos(etEmail);
+                checarCampos(etSenha);
+                Log.d( "TAG", "Entrar: " + etEmail.getText().toString() );
+
+                if(vfCampo) {
+                    auth.signInWithEmailAndPassword(etEmail.getText().toString(),etSenha.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                        @Override
+                        public void onSuccess(AuthResult authResult) {
+                            Toast.makeText(LoginActivity.this, "Logado com sucesso", Toast.LENGTH_SHORT).show();
+                            checarNivelDeAcesso(authResult.getUser().getUid());
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+        });
+
+        //ir ao cadastrar
+        btnCadastro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity( new Intent (getApplicationContext() , CadastroActivity.class) );
+            }
+        });
 
         authStateListener = new FirebaseAuth.AuthStateListener() {      //inicializa verifica o que está ocorrendo, de acordo com o estado dele [autentc / não-autentic]
 
@@ -60,115 +101,65 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-        btnEntrar.setOnClickListener(new View.OnClickListener() {
+    }
+
+    private void checarNivelDeAcesso(String uid) {
+        DocumentReference docRef = colecUsuario.collection("users").document(uid);  //objeto para ouvir os dados do doccumento de banco de dados Firebase
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onClick(View view) {
-                entrar();
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Log.d("TAG", "Ok " + documentSnapshot.getData());
+
+                if ( documentSnapshot.getString("ehAdmin") != null ) {     //perfil admin
+                    startActivity(new Intent(getApplicationContext(), HomeAdmActivity.class));
+                    finish();
+                }
+
+                if ( documentSnapshot.getString("ehUser") != null ) {      //perfil user contratante
+                    startActivity(new Intent(getApplicationContext(), ListaActivity.class));
+                    finish();
+                }
             }
         });
-
-/*        btnCadastro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                cadastrar();
-            }
-        });*/
-
     }
 
-    private void entrar() {
-        String email = etEmail.getText().toString();
-        String senha = etSenha.getText().toString();
-
-        if ( !email.isEmpty() && !senha.isEmpty() ) {
-//            auth.signInWithEmailAndPassword( email , senha ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                @Override
-//                public void onComplete(@NonNull Task<AuthResult> task) {    //task é a tarefa resultante dessa ação
-//                    if ( !task.isSuccessful() ) {
-//                        Toast.makeText( LoginActivity.this ,
-//                                "Erro ao realizar o login" , Toast.LENGTH_LONG).show();
-//                    } else {
-//                        usuario = auth.getCurrentUser();
-//                        if(usuario != null){
-//                            Intent intent;
-//                            if( usuario.getEmail().equals("admin@domin.com")) {
-//                                intent = new Intent(LoginActivity.this , HomeAdmActivity.class);
-//                            } else {
-//                                intent = new Intent(LoginActivity.this , ListaActivity.class);
-//                            }
-//                            startActivity( intent );
-//                        }
-//                    }
-//
-//                }
-//            });       //obj.metodo.evento( ref. superclasse {  @Override método(parm.) {...}  });
-
-                            Intent intent;
-                            if( email.equals("admin@domin.com")) {
-                                intent = new Intent(LoginActivity.this , HomeAdmActivity.class);
-                            } else {
-                                intent = new Intent(LoginActivity.this , ListaActivity.class);
-                            }
-                            startActivity( intent );
-
+    public boolean checarCampos(EditText textField){
+        if(textField.getText().toString().isEmpty()){
+            textField.setError("Erro");
+            vfCampo = false;
+        } else {
+            vfCampo = true;
         }
 
+        return vfCampo;
     }
 
-    /*private void cadastrar() {
-        String email = etEmail.getText().toString();
-        String senha = etSenha.getText().toString();
-
-        if (!email.isEmpty() && !senha.isEmpty()) {
-            auth.createUserWithEmailAndPassword(email, senha).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(auth.getCurrentUser() != null) {
+            final DocumentReference docRef = FirebaseFirestore.getInstance().collection("users").document(auth.getCurrentUser().getUid());
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (!task.isSuccessful()) {
-                        Toast.makeText(LoginActivity.this,
-                                "Erro ao cadastrar", Toast.LENGTH_LONG).show();
-                    } else {
-                        usuario = auth.getCurrentUser();
-                        if(usuario != null) { Intent intent;
-                            if( usuario.getEmail().equals("admin@domin.com")) {
-                                intent = new Intent(LoginActivity.this , HomeAdmActivity.class);
-                            } else {
-                                intent = new Intent(LoginActivity.this , ListaActivity.class);
-                            }
-                            startActivity( intent ); }
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if(documentSnapshot.getString("ehAdmin") != null) {
+                        startActivity(new Intent(getApplicationContext(), HomeAdmActivity.class));
+                        finish();
                     }
 
+                    if(documentSnapshot.getString("ehUser") != null) {
+                        startActivity(new Intent(getApplicationContext(), ListaActivity.class));
+                        finish();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    auth.signOut();
+                    startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+                    finish();
                 }
             });
         }
-
-        /*
-        //sobrescrita para criar instancia dentro do método cadastrar
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_register);
-
-            etEmail = findViewById(R.id.etEmail);
-            etSenha = findViewById(R.id.etSenha);
-            btnEntrar = findViewById(R.id.btnEntrar);
-            btnCadastro = findViewById(R.id.btnCadastro);
-
-            //outra forma de verificar se os campos não estão vazios, fazendo referência ao método abaixo
-            verCampos(etEmail);
-            verCampos(etSenha);
-
-        }*/
-
-    //}/*
-
-    /*public boolean verCampos(EditText textField){
-        if(textField.getText().toString().isEmpty()){
-            textField.setError("Error");
-            valid = false;
-        }else {
-            valid = true;
-        }
-
-        return valid;
-    }*/
+    }
 }
