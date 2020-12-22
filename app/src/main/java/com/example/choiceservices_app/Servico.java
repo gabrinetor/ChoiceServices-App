@@ -2,7 +2,7 @@ package com.example.choiceservices_app;
 
 import java.io.Serializable;
 
-public class Servico implements Serializable {
+public class Servico implements Serializable {  //modelagem dos itens trabalhados
 
     private String id;
     private String nome;

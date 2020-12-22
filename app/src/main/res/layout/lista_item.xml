@@ -1,4 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    padding>
+
+    <TextView
+        android:id="@+id/itemNome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nome"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/itemPreco"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Preço"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/itemNome" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
@@ -54,7 +81,7 @@
                 android:layout_marginLeft="60dp"
                 android:layout_weight="0.23"
                 android:paddingRight="5dp"
-                android:text="R$ 300,00"
+                android:text="R$ 450,00"
                 android:textColor="#000000"
                 android:textSize="14dp"
                 android:textStyle="bold" />
@@ -63,4 +90,4 @@
 
     </RelativeLayout>
 
-</LinearLayout>
+</LinearLayout-->
